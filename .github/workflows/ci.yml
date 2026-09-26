@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: checkout the compiler prelude
+        uses: actions/checkout@v4
+        with:
+          repository: trigora-dev/tcc-engine
+          path: tcc-engine
+      - run: cargo fmt --check
+      - run: cargo test
+        env:
+          TCC_RUST_PRELUDE: tcc-engine/frontends/rust/prelude/src/lib.rs
