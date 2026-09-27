@@ -1,0 +1,28 @@
+name: package
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: [main]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo package -p trigora
+      - run: cargo package -p trigora-client
+      - name: Packaged crates have no path dependencies
+        run: |
+          for crate in target/package/trigora-*.crate target/package/trigora-client-*.crate; do
+            toml="$(tar -tzf "$crate" | grep '/Cargo.toml$' | head -n 1)"
+            if tar -xOf "$crate" "$toml" | grep -E 'path[[:space:]]*=[[:space:]]*"\.\.'; then
+              exit 1
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trigora-rust-0.9.0
+          path: target/package/*.crate
