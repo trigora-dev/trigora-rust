@@ -24,7 +24,7 @@ jobs:
           cargo publish -p trigora
       - uses: actions/download-artifact@v4
         with:
-          name: trigora-rust-0.9.0
+          name: trigora-rust-1.0.0
           path: dist
       - name: GitHub Release
         uses: softprops/action-gh-release@v2

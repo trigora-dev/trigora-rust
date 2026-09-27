@@ -1,6 +1,6 @@
 [package]
 name = "trigora-client"
-version = "0.9.0"
+version = "1.0.0"
 edition = "2021"
 license = "MIT"
 description = "HTTP client for Trigora programs and executions."
