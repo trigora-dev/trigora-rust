@@ -1,42 +1,110 @@
-# trigora-rust
+<p align="center">
+  <a href="https://trigora.dev">
+    <img src="https://trigora.dev/rust-banner.png" alt="Trigora / Rust — durable execution without history replay." width="100%" />
+  </a>
+</p>
 
-Author a durable program with the `trigora` crate. Control executions with `trigora-client`.
+# Trigora for Rust
 
-```rust
-use trigora::{effect, wait_for_event};
+**Durable execution for Rust without history replay.**
 
-pub struct Approval {
-    pub result: f64,
-    pub review: bool,
-}
+Build long-lived Rust programs that can suspend across effects, events, timers, and child executions, then recover from committed continuation state after failure.
 
-pub async fn main() -> Result<Approval, String> {
-    let amount: f64 = 42.0;
-    let result = effect("generate", move || amount).await?;
-    let review: bool = wait_for_event("approved").await?;
-    Ok(Approval {
-        result: result,
-        review: review,
-    })
-}
+Trigora is powered by **Transparent Continuation Checkpointing (TCC)**.
+
+## Install
+
+```sh
+cargo add trigora trigora-client
+cargo install trigora-cli
 ```
 
-The program entry is `pub async fn main`. `pub async fn run` is not an entry.
+- `trigora` — Rust authoring crate
+- `trigora-client` — Trigora Cloud API client
+- `trigora-cli` — Trigora CLI
 
-Triggers are configured in `trigora.toml` and deployed with the Trigora CLI. They are not SDK or client APIs.
+## Quickstart
 
-`effect` and `wait_for_event` are durable boundaries. The closure body does not run inside the program. Trigora calls it later with the captured bindings as JSON (`{"amount": 42.0}`). A capture uses `move`. Names are string literals. Give generic results a type ascription (`let review: bool = ...`).
+Initialize:
 
-`trigora` only exists so `cargo check` can typecheck that subset. It does not run the program. Start the CLI with `trigora dev`, then:
-
-```rust
-let run = trigora_client::start("approval", None)?;
-run.send("approved", serde_json::json!(true))?;
-let result = run.result()?;
+```sh
+trigora init
 ```
 
-## rust.subset.v1
+Run locally:
 
-Owned values only: `f64`, `bool`, `String`, structs, enums, `Option`, `Result`, and `Vec`. `f64` and `bool` copy. Everything else moves. Integer types, references, methods, macros, and iterators are outside this subset. The compiler rejects them.
+```sh
+trigora dev
+```
 
-See `examples/approval`.
+Deploy:
+
+```sh
+trigora deploy
+```
+
+See the [quickstart](https://trigora.dev/docs/quickstart).
+
+## Durable programs
+
+Trigora programs can:
+
+- execute durable external effects;
+- wait for events;
+- sleep durably;
+- invoke child executions;
+- join or race concurrent branches;
+- resume after worker or process failure.
+
+The Rust frontend implements the declared `rust.subset.v1` semantics rather than arbitrary Rust execution.
+
+See the [TCC Rust subset specification](https://github.com/trigora-dev/tcc-engine/blob/main/spec/rust-subset.md).
+
+## Crates
+
+### `trigora`
+
+Authoring surface for durable Rust programs.
+
+### `trigora-client`
+
+Rust client for the Trigora Cloud API.
+
+## How it fits together
+
+```text
+Rust source
+    │
+    ▼
+  trigora
+    │
+    ▼
+TCC Rust frontend
+    │
+    ▼
+TCC artifact
+    │
+    ▼
+Trigora runtime
+```
+
+TypeScript and Python target the same artifact and execution model.
+
+## Ecosystem
+
+- [Trigora](https://github.com/trigora-dev/trigora)
+- [Trigora for TypeScript](https://github.com/trigora-dev/trigora-typescript)
+- [Trigora for Python](https://github.com/trigora-dev/trigora-python)
+- [TCC Engine](https://github.com/trigora-dev/tcc-engine)
+
+## Links
+
+- [Website](https://trigora.dev)
+- [Documentation](https://trigora.dev/docs)
+- [Trigora Cloud](https://cloud.trigora.dev)
+- [Research](https://trigora.dev/research)
+- [Technical report](https://trigora.dev/research/whitepaper)
+
+## License
+
+MIT © 2026 Trigora, Inc.
