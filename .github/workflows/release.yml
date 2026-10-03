@@ -15,16 +15,33 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
       - name: Publish crates
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
           test -n "$CARGO_REGISTRY_TOKEN"
-          cargo publish -p trigora-client
-          cargo publish -p trigora
-      - uses: actions/download-artifact@v4
+          set -euo pipefail
+          publish() {
+            local name="$1"
+            local output status
+            set +e
+            output=$(cargo publish -p "$name" 2>&1)
+            status=$?
+            set -e
+            printf '%s\n' "$output"
+            if [ "$status" -eq 0 ]; then
+              return 0
+            fi
+            if printf '%s\n' "$output" | grep -Eiq 'already exists|already uploaded'; then
+              return 0
+            fi
+            return "$status"
+          }
+          publish trigora-client
+          publish trigora
+      - uses: actions/download-artifact@v7
         with:
           name: trigora-rust-1.0.0
           path: dist
