@@ -12,9 +12,11 @@ fn local_v1_parity() {
         serde_json::from_str(&env::var("TRIGORA_PARITY_BODY").expect("body")).expect("json");
     let client = Client::new(ClientOptions {
         url: Some(url),
+        remote: false,
         token: None,
         project_id: None,
-    });
+    })
+    .unwrap();
     let projects = client.projects().list().expect("projects");
     assert!(projects["projects"]
         .as_array()

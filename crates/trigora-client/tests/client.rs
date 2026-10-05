@@ -92,7 +92,8 @@ fn start_send_result_and_whoami() {
     let client = Client::new(trigora_client::ClientOptions {
         url: Some(url),
         ..trigora_client::ClientOptions::default()
-    });
+    })
+    .unwrap();
     assert_eq!(client.whoami().unwrap()["actorType"], "api_token");
     assert_eq!(
         client.programs().versions("approval", None).unwrap()["versions"][0]["id"],
