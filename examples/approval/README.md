@@ -1,7 +1,7 @@
 # Approval
 
 ```bash
-cargo install trigora-cli --version 1.0.0
+cargo install trigora-cli --version 1.0.1
 trigora dev
 ```
 
