@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: trigora-dev/tcc-engine
+          ref: v26.10.2
           path: tcc-engine
       - run: cargo fmt --check
       - run: cargo test

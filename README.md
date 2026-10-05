@@ -70,26 +70,6 @@ Authoring surface for durable Rust programs.
 
 Rust client for the Trigora Cloud API.
 
-## How it fits together
-
-```text
-Rust source
-    │
-    ▼
-  trigora
-    │
-    ▼
-TCC Rust frontend
-    │
-    ▼
-TCC artifact
-    │
-    ▼
-Trigora runtime
-```
-
-TypeScript and Python target the same artifact and execution model.
-
 ## Ecosystem
 
 - [Trigora](https://github.com/trigora-dev/trigora)

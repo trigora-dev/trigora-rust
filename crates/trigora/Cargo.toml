@@ -3,7 +3,7 @@ name = "trigora"
 version = "1.0.0"
 edition = "2021"
 license = "MIT"
-description = "Authoring crate for Trigora Rust programs. The bodies do not run the program."
+description = "Rust authoring SDK for Trigora durable programs."
 repository = "https://github.com/trigora-dev/trigora-rust"
 
 [dependencies]
