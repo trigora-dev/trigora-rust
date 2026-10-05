@@ -65,7 +65,12 @@ fn serve() -> String {
             } else if path == "/v1/whoami" {
                 json!({"actorType": "api_token"})
             } else if path == "/v1/executions" {
-                json!({"execution": {"id": "exec_1", "programId": body["programId"]}})
+                let id = if body.get("input").is_none() {
+                    "exec_omitted"
+                } else {
+                    "exec_1"
+                };
+                json!({"execution": {"id": id, "programId": body["programId"]}})
             } else if path.ends_with("/events") {
                 json!({"ok": true, "name": body["name"]})
             } else if path == "/v1/executions/exec_1/result" {
@@ -118,6 +123,8 @@ fn start_send_result_and_whoami() {
         client.executions().list(Some(page)).unwrap()["path"],
         "/v1/executions?limit=2&cursor=a%20b"
     );
+    let omitted = client.executions().start("approval", None).unwrap();
+    assert_eq!(omitted.id, "exec_omitted");
     let run = client
         .executions()
         .start("approval", Some(json!({"n": 1})))

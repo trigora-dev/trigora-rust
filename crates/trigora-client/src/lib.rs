@@ -248,14 +248,13 @@ impl Executions {
         program_id: &str,
         input: Option<Value>,
     ) -> Result<ExecutionHandle, TrigoraError> {
-        let body = self.client.request(
-            "POST",
-            "/v1/executions",
-            Some(serde_json::json!({
-                "programId": program_id,
-                "input": input.unwrap_or(Value::Object(Default::default())),
-            })),
-        )?;
+        let mut payload = serde_json::json!({ "programId": program_id });
+        if let Some(input) = input {
+            payload["input"] = input;
+        }
+        let body = self
+            .client
+            .request("POST", "/v1/executions", Some(payload))?;
         let id = body
             .pointer("/execution/id")
             .and_then(Value::as_str)
